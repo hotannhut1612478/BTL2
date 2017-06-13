@@ -1,42 +1,45 @@
 ﻿#pragma once
 #include <string>
 class User{
-	//số lượng Users
-	int static soLuong;
-	// mã số tài khoản
+	// Mã số tài khoản
 	int m_id = 0;
-	// tên đăng nhập
-	char m_nameLogin[20] = "";
-	// mật khẩu
-	char m_passWord[20] = "";
-	// họ và tên
+	// Họ và tên
 	char m_hoTen[40] = "";
-	// số điện thoại
+	// Tên đăng nhập
+	char m_nameLogin[20] = "";
+	// Mật khẩu
+	char m_passWord[20] = "";
+	// Nghề Nghiệp
+	char m_job[30] = "";
+	// Địa chỉ
+	char m_address[40] = "";
+	// Số điện thoại
 	char m_sdt[14] = {};
 	// chứng minh nhân dân
 	char m_cmnd[14] = {};
-	// mã định danh
+	// Mã định danh
 	int m_ident;
-	// tình trạng hoạt động
+	// Tình trạng hoạt động
 	bool m_active = true;
 public:
 	User();
 	~User();
 public:
-	bool checkPass(char[], char[]);
 	void subscription();
 	void ghi();
 	void doc();
 	void inThongTin();
 	void changePassWord();
 	std::string nhapMatKhau();
+	int soSanh(std::string, std::string);
+	std::string getName();
 private:
 	std::string xoaKTTrongChuoi(std::string, int);
 	std::string xoaKhoangTrong(std::string);
-	bool chu(char []);
-	bool number(char[]);
-	bool leng(char[], std::string);
-	bool kiTuDacBiet(char[], std::string);
-		
+	bool chu(std::string);
+	bool leng(std::string, std::string);
+	bool kiTuDacBiet(std::string, std::string);
+	bool number(std::string);
+	int soLuong();
 };
 
