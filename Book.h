@@ -6,7 +6,7 @@ public:
 	~Book();
 private:
 	// ID
-	long m_id = 0;
+	int m_id = 0;
 	// Mã số sách
 	int m_ISBN = -1;
 	// Tên sách
@@ -24,14 +24,15 @@ private:
 	// Mô tả - giới thiệu
 	char m_describe[500] = "";
 public:
-	void find(int, std::string);
+	void find(int, std::string, bool &);
 	void inThongTin();
 	void fill();
 	void add();
 	void autoAdd();
+	void layID(int);
 private:
 	bool soSanh(std::string, std::string);
 	int soLuong();
-
+	void luuTamThoi();
 };
 

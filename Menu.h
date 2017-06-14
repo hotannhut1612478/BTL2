@@ -15,8 +15,10 @@ public:
 	void menuProvisions(User);
 	void mainMenu(User);
 	void menuQuanLiSach(User);
+	void menuTimSach(User);
+	void menuThemSach(User);
 	void menuAccount(User);
+	void menuThongBaoThuVien(User);
 private:
-	Book *danhSachTimKiem(Book b, int i);
 };
 

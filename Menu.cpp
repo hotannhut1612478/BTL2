@@ -1,6 +1,7 @@
 ﻿#include "menu.h"
 #include "User.h"
 #include "Book.h"
+#include "ThongBaoThuVien.h"
 #include <iostream>
 #include <Windows.h>
 #include <fstream>
@@ -187,8 +188,8 @@ void Menu::mainMenu(User x) {
 	cout << "|===> " << ds++ << ". Tim kiem sach                                               |" << endl;
 	cout << "|===> " << ds++ << ". Xem thong bao                                               |" << endl;
 	cout << "|===> " << ds++ << ". Quan li tai khoan                                           |" << endl;
-	cout << "|===> " << ds++ << ". Thoat                                                       |" << endl;
 	cout << "|===> " << ds++ << ". Dang xuat                                                   |" << endl;
+	cout << "|===> " << ds++ << ". Thoat                                                       |" << endl;
 	cout << "----------------------------------------------------------------------" << endl;
 
 	int choice;
@@ -198,13 +199,16 @@ void Menu::mainMenu(User x) {
 		menuQuanLiSach(x);
 		break;
 	case 2:
+		menuThongBaoThuVien(x);
 		break;
 	case 3:
 		system("cls");
 		menuAccount(x);
 		break;
-	case 5:
+	case 4:
 		menuIntro(x);
+		break;
+	case 5:
 		break;
 	default:
 		cout << "\tLua chon cua ban khong hop le ! vui long kiem tra va nhap lai ! " << endl;
@@ -215,9 +219,11 @@ void Menu::mainMenu(User x) {
 
 // Menu tìm sách
 void Menu::menuQuanLiSach(User x) {
+	// xóa thông tin trong file lưu tạm
+	ofstream ghi("luutam.txt", ios::trunc);
+
 	system("cls");
 	string str;
-	Book b;
 	cout << "================DANH SACH CHUC NANG================" << endl;
 	cout << endl;
 	ds = 0;
@@ -232,91 +238,128 @@ void Menu::menuQuanLiSach(User x) {
 	cout << "\tLua chon cua ban la : ";
 	int choice;
 	cin >> choice;
-	cin.ignore();
 	switch (choice) {
 	case 0:
 		mainMenu(x);
 		break;
 	case 1:
+		menuTimSach(x);
+		break;
+	case 2:
+		menuThemSach(x);
+		break;
+	};
+}
+
+void Menu::menuTimSach(User x) {
+	system("cls");
+	bool valid;
+	int choice;
+	string str;
+	Book b;
+	cout << "Ban muon tim kiem theo ?" << endl;
+	ds = 0;
+	cout << "-----------------------------------------------------------------" << endl;
+	cout << "|===> " << ds++ << ". Quay lai                                              |" << endl;
+	cout << "|===> " << ds++ << ". Ten sach                                              |" << endl;
+	cout << "|===> " << ds++ << ". Ma so sach                                            |" << endl;
+	cout << "|===> " << ds++ << ". Ten tac gia                                           |" << endl;
+	cout << "-----------------------------------------------------------------" << endl;
+	cin >> choice;
+	system("cls");
+
+	switch (choice) {
+	// Quay lại
+	case 0:
+		menuQuanLiSach(x);
+		break;
+	// Tìm kiếm theo tên
+	case 1:
+		cout << "Nhap vao ten sach : ";
+		cin.ignore();
+		getline(cin, str);
+		cout << "======DANH SACH CAC SACH LIEN QUAN ======\n" << endl;
+		b.find(1, str, valid);
+		break;
+	// Tìm kiếm theo mã số sách
+	case 2:
+		cout << "Nhap ma so sach : ";
+		cin.ignore();
+		getline(cin, str);
+		cout << "======DANH SACH CAC SACH LIEN QUAN ======\n" << endl;
+		b.find(2, str, valid);
+		break;
+	// Tìm kiếm theo tác giả
+	case 3:
+		cout << "Nhap ten tac gia : ";
+		cin.ignore();
+		getline(cin, str);
+		cout << "======DANH SACH CAC SACH LIEN QUAN ======\n" << endl;
+		b.find(3, str, valid);
+		break;
+	default:
+		cout << "Lua chon khong hop le" << endl;
+		menuQuanLiSach(x);
+		break;
+	};
+
+	if (valid == false) cout << "Khong tim thay sach tren trong thu vien !" << endl;
+	cout << "\n===============================================" << endl;
+	if (valid == true) {
+		cout << "Chon sach : ";
+		cin >> choice;
+		b.layID(choice);
 		system("cls");
-		cout << "Ban muon tim kiem theo ?" << endl;
+		b.inThongTin();
+		cout << endl;
 		ds = 0;
 		cout << "-----------------------------------------------------------------" << endl;
 		cout << "|===> " << ds++ << ". Quay lai                                              |" << endl;
-		cout << "|===> " << ds++ << ". Ten sach                                              |" << endl;
-		cout << "|===> " << ds++ << ". Ma so sach                                            |" << endl;
-		cout << "|===> " << ds++ << ". Ten tac gia                                           |" << endl;
+		cout << "|===> " << ds++ << ". Gui yeu cau dang ki muon sach                         |" << endl;
 		cout << "-----------------------------------------------------------------" << endl;
 		cin >> choice;
-		system("cls");
-		switch (choice){
-		// Quay lại
+		switch (choice) {
 		case 0:
-			menuQuanLiSach(x);
+			mainMenu(x);
 			break;
-		// Tìm kiếm theo tên
-		case 1 :
-			cout << "Nhap vao ten sach : ";
-			cin.ignore();
-			getline(cin, str);
-			cout << "======DANH SACH CAC SACH LIEN QUAN ======\n" << endl;
-			b.find(1, str);
-			break;
-		// Tìm kiếm theo mã số sách
-		case 2 :
-			cout << "Nhap ma so sach : ";
-			cin.ignore();
-			getline(cin, str);
-			cout << "======DANH SACH CAC SACH LIEN QUAN ======\n" << endl;
-			b.find(2, str);
-			break;
-		// Tìm kiếm theo tác giả
-		case 3 :
-			cout << "Nhap ten tac gia : ";
-			cin.ignore();
-			getline(cin, str);
-			cout << "======DANH SACH CAC SACH LIEN QUAN ======\n" << endl;
-			b.find(3, str);
-			break;
-		default:
-			cout << "Lua chon khong hop le" << endl;
-			menuQuanLiSach(x);
+		case 1:
+			
 			break;
 		};
-		cout << "\n===============================================" << endl;
-		cout << "Chon sach : ";
-		cin >> choice;
-		system("cls");
-		
+	}
+	else {
+		system("pause");
+		menuTimSach(x);
+	};
+};
+
+//Menu thêm sách
+void Menu::menuThemSach(User x) {
+	system("cls");
+	string str;
+	Book b;
+	cin.ignore();
+	int choice;
+	cout << "=========================== Nhap vao thong tin sach ==========================" << endl;
+	b.fill();
+	cout << "Nhan ENTER de tiep tuc !";
+	getline(cin, str);
+	system("cls");
+	cout << "==================== Ban dong y them sach nay vao thu vien ? =================" << endl;
+	b.inThongTin();
+	cout << "----------------------------------------------------------------------" << endl;
+	cout << "| 1. Yes                                               2. No         |" << endl;
+	cout << "----------------------------------------------------------------------" << endl;
+	cin >> choice;
+	switch (choice) {
+	case 1:
+		b.add();
+		cout << "Da bo sung thong tin sach vao thu vien !" << endl;
 		system("pause");
 		mainMenu(x);
 		break;
 	case 2:
-		system("cls");
-		cout << "=========================== Nhap vao thong tin sach ==========================" << endl;
-		b.fill();
-		cout << "Nhan ENTER de tiep tuc !";
-		getline(cin, str);
-		system("cls");
-		cout << "==================== Ban dong y them sach nay vao thu vien ? =================" << endl;
-		b.inThongTin();
-		cout << "----------------------------------------------------------------------" << endl;
-		cout << "| 1. Yes                                               2. No         |" << endl;
-		cout << "----------------------------------------------------------------------" << endl;
-		cin >> choice;
-		switch (choice){
-		case 1:
-			b.add();
-			cout << "Da bo sung thong tin sach vao thu vien !" << endl;
-			system("pause");
-			mainMenu(x);
-			break;
-		case 2:
-			break;
-		default:
-			break;
-		};
-
+		mainMenu(x);
 		break;
 	default:
 		cout << "\tLua chon cua ban khong hop le ! vui long kiem tra va nhap lai ! " << endl;
@@ -325,6 +368,7 @@ void Menu::menuQuanLiSach(User x) {
 		break;
 	};
 };
+
 
 // Menu quản lí tài khoản
 void Menu::menuAccount(User x) {
@@ -357,15 +401,87 @@ void Menu::menuAccount(User x) {
 		cin >> choice;
 		break;
 	}
-}
+};
+
+//Menu thông báo thư viện
+void Menu::menuThongBaoThuVien(User x) {
+	int choice;
+	do {
+		system("cls");
+		ThongBaoThuVien data[Max_Anouce];
+		string str[Max_Anouce];
+		cout << "TAT CA THONG BAO :" << endl;
+
+		fstream f;
+		f.open("thongbao.txt", ios::in);
+		int line = 0;
+		int soDong;
+		while (!f.eof()) {
+			string x;
+			fflush(stdin);
+			getline(f, x);
+			str[line] = x;
+			line++;
+		};
+		f.close();
+
+		soDong = (line + 1) / 2;
+		for (int i = 0; i < soDong; i++) {
+			data[i].tieuDe = str[i * 2];
+			data[i].noiDung = str[i * 2 + 1];
+			string S = data[i].noiDung;
+			if (S != "") {
+				cout << i + 1 << ". " << " [TIEU DE]: " << data[i].tieuDe << endl;
+				cout << "\t    [NOI DUNG]";
+				cout << "\t";
+				for (int i = 0; i < 45; i++) {
+					if (i < S.length()) cout << S[i];
+				};
+				cout << "..." << endl << endl << endl;
+			};
+		};
+
+		cout << "-----------------" << endl;
+		cout << "| Menu thong bao | " << endl;
+		cout << "-----------------" << endl;
+		cout << "\t" << "1. Them thong bao" << endl;
+		cout << "\t" << "2. Chinh sua thong bao" << endl;
+		cout << "\t" << "3. Xoa thong bao" << endl;
+		cout << "\t" << "4. Doc noi dung thong bao" << endl;
+		cout << "\t" << "5. Thoat" << endl;
+		cout << "\t" << "***********************" << endl;
+		cout << "\t" << "Nhap lua chon cua ban: ";
+		cin >> (choice);
+
+		ThongBaoThuVien x;
+		switch (choice) {
+		case 1:
+			cin.ignore();
+			x.themThongBao();
+			break;
+		case 2:
+			cin.ignore();
+			x.suaThongBao(data, soDong);
+			break;
+		case 3:
+			cin.ignore();
+			x.xoaThongBao(data, soDong);
+			break;
+		case 4:
+			cin.ignore();
+			x.docThongBao(data);
+			break;
+		case 5:
+			return;
+			break;
+		default:
+			cout << "Moi ban nhap lai";
+			cin >> choice;
+			break;
+		};
+	} while (choice != 4);
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////////
-//private:5
-
-Book *Menu::danhSachTimKiem(Book b, int i) {
-	Book sach[100];
-	sach[i] = b;
-	return sach;
-}
-
-
+//private:
