@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Muon sach ngay 1/6
 A da muon: connan, 7 vien ngoc rong
 Muon sach ngay 1/6
@@ -12,3 +13,15 @@ Sach moi
 onpiece, naruto...
 sach moi 
 7 vien ngoc rong
+=======
+Khai truong chi nhanh thu 5
+Thu vien LIBRO tung bung khai truong chi nhanh moi tai quan 1, dia chi so 20 Nguyen Hue, phuong ABC, thanh pho Ho Chi Minh 
+Sach moi ve
+Onpiece, naruto, 7 vien ngoc rong, 7 vien ngoc rong, eromanga sensei
+Danh sach bi phat ve tre han tra sach
+Nguyen Van A, tran Van B, Phan Thi C
+Thu vien tam ngung hoat dong trong mot thang
+Nham dap ung nhu cau ngay cang cao cua khach hang, vao ngay 14/6/2017 thu vien se tam dong cua de sua chua va nang cap co so vat chat. Thoi gian ngung hoat dong co the keo dai mot thang.
+Giam gia 50%
+giam gia 50% cho moi chi phi muon sach vao ngay 14/6/2017
+>>>>>>> origin/LIBRO
