@@ -23,6 +23,8 @@ private:
 	long m_cost = -1;
 	// Mô tả - giới thiệu
 	char m_describe[500] = "";
+	// Số lượng
+	int m_number = -1;
 public:
 	void find(int, std::string, bool &);
 	void inThongTin();

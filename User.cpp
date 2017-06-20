@@ -1,9 +1,11 @@
 ﻿#include "User.h"
+#include "Complex.h"
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <sstream>
 #include <fstream>
-#include <conio.h>
+#include <ctime>
 #include <Windows.h>
 
 using namespace std;
@@ -12,14 +14,13 @@ User::User() {
 User::~User(){
 };
 
-	// mẫu đăng kí
+// mẫu đăng kí
 void User::subscription() {
-
 	cin.clear();
 	cin.ignore();
-	//Nhập vào Họ và tên
+	//Nhập vào Họ và tên, họ và tên chỉ có thể chứa kí tự
 	cout << "Nhap ho va ten : ";
-	string str1, str2, str3, str4, str5, str6, str7;
+	string str1, str2, str3, str4, str5;
 	getline(cin, str1);
 	if (str1.length() > 40 || str1.length() == 0) {
 		system("cls");
@@ -28,47 +29,16 @@ void User::subscription() {
 		return;
 	};
 	xoaKhoangTrong(str1);
-	// nếu Họ và Tên chỉ chứa các kí tự thì next
 	if (chu(str1) == false) {
 		system("cls");
 		cout << "Ho va ten chi co the chua ki tu !";
 		subscription();
 		return;
 	};
-	// Nhập vào tên đăng nhập và kiểm tra tính hợp lệ
-	cout << "Nhap vao ten dang nhap : ";
-	getline(cin, str2);
-	if (leng(str2, "ten dang nhap") == false || kiTuDacBiet(str2, "Ten dang nhap") == false) {
-		subscription();
-		return;
-	};
-	if (soSanh(str2,"") >= 1) {
-		system("cls");
-		cout << "Ten dang nhap nay da ton tai !";
-		subscription();
-		return;
-	};
-	//Nhập vào mật khẩu và kiểm tra tính hợp lệ
-	cout << "Nhap mat khau : ";
-	str3 = nhapMatKhau();
-	if (leng(str3, "mat khau") == false || kiTuDacBiet(str3, "Mat khau") == false) {
-		subscription();
-		return;
-	};
-	//Xác nhận lại mật khẩu
-	cout << "Xac nhan lai mat khau : ";
-	string ts = nhapMatKhau();
-	// nếu xác nhận mật khẩu không khớp thì reset
-	if (ts != str3) {
-		system("cls");
-		cout << "Xac nhan mat khau khong chinh xac !";
-		subscription();
-		return;
-	};
 	//Nhập nghề nghiệp :
 	cout << "Nhap nghe nghiep : ";
-	getline(cin, str4);
-	if (str4.length() > 30) {
+	getline(cin, str2);
+	if (str2.length() > 30) {
 		system("cls");
 		cout << "Do dai nghe nghiep khong the qua 30 ki tu";
 		subscription();
@@ -76,8 +46,8 @@ void User::subscription() {
 	};
 	// Nhập địa chỉ :
 	cout << "Nhap dia chi : ";
-	getline(cin, str5);
-	if (str5.length() > 40) {
+	getline(cin, str3);
+	if (str3.length() > 40) {
 		system("cls");
 		cout << "Do dai dia chi khong the qua 40 ki tu";
 		subscription();
@@ -85,9 +55,8 @@ void User::subscription() {
 	};
 	// Nhập mã số chứng minh nhân dân, cmnd chỉ có thể chứa chữ số
 	cout << "Nhap ma so chung minh nhan dan : ";
-	getline(cin, str6);
-	// Nếu mã cmnd không hợp lệ thì reset
-	if (number(str6) == false) {
+	getline(cin, str4);
+	if (number(str4) == false) {
 		system("cls");
 		cout << "So chung minh nhan dan khong ton tai !";
 		subscription();
@@ -95,257 +64,214 @@ void User::subscription() {
 	};
 	// Nhập vào số điện thoại, số điện thoại chỉ có thể chứa chữ số
 	cout << "Nhap so dien thoai : ";
-	getline(cin, str7);
-	//nếu số điện thoại không hợp lệ thì reset
-	if (number(str7) == false) {
+	getline(cin, str5);
+	if (number(str5) == false) {
 		system("cls");
 		cout << "So dien thoai khong ton tai !";
 		subscription();
 		return;
 	};
-	cout << "Dang ki thanh cong !" << endl;
+
+	cout << "Gui dang ki thanh cong !" << endl;
+	cout << "Ban hay den thu vien gan nhat de xac nhan thanh vien" << endl;
 	Sleep(1000);
-	system("cls");
-	cout << "============================= Xac nhan lai thong tin tai khoan =================================" << endl;
 	strcpy_s(m_hoTen, str1.c_str());
-	strcpy_s(m_nameLogin, str2.c_str());
-	strcpy_s(m_passWord, str3.c_str());
-	strcpy_s(m_job, str4.c_str());
-	strcpy_s(m_address, str5.c_str());;
-	strcpy_s(m_cmnd, str6.c_str());
-	strcpy_s(m_sdt, str7.c_str());
-	m_id = soLuong() + 1;
-	inThongTin();
+	strcpy_s(m_job, str2.c_str());
+	strcpy_s(m_address, str3.c_str());;
+	strcpy_s(m_cmnd, str4.c_str());
+	strcpy_s(m_sdt, str5.c_str());
+	m_id = tinhSoLuong() + 1;
+	setTime();
 };
 
+// lưu thông tin User vào file "Users.dat"
 void User::ghi() {
 	ofstream ghi("Users.dat", ios::app | ios ::binary);
 	if (ghi) ghi.write(reinterpret_cast <const char *> (this), sizeof(User));
-	else cout << "Loi : khong the mo file chua thong tin Users." << endl;
 };
+
 
 void User::doc() {
 	ifstream doc("Users.dat", ios::app);
 	if (doc) doc.read(reinterpret_cast <char *> (this), sizeof(User));
-	else cout << "Loi : khong the mo file chua thong tin Users." << endl;
 };
 
-void User::inThongTin() {
-	cout << "Ma so ID : " << m_id << endl;
-	cout << "Ho va ten : " << m_hoTen << endl;
-	cout << "Ten dang nhap : " << m_nameLogin << endl;
-	cout << "Nghe nghiep hien tai : " << m_job << endl;
-	cout << "Dia chi : " << m_address << endl;
-	cout << "So dien thoai : " << m_sdt << endl;
-	cout << "Chung minh nhan dan so : " << m_cmnd << endl;
-}
 
-void User::changePassWord() {
-	char mk[18] = "";
-	cout << "Nhap mat khau cu : ";
-	string ts = nhapMatKhau();
-	if (ts == m_passWord) {
-		cout << "Nhap mat khau moi : ";
-		ts = nhapMatKhau();
-		// Kiểm tra tính hợp lệ của mật khẩu mới
-		if (leng(ts, "mat khau") == false) {
-			cout << endl;
-			changePassWord();
-			return;
+ostream &operator << (ostream &xuat, User &x){
+	xuat << "Ma so ID : " << x.getID() << endl;
+	xuat << "Ho va ten : " << x.getHoTen() << endl;
+	xuat << "Nghe nghiep hien tai : " << x.getJob() << endl;
+	xuat << "Dia chi : " << x.getAddress() << endl;
+	xuat << "So dien thoai : " << x.getSDT() << endl;
+	xuat << "Chung minh nhan dan so : " << x.getCMND() << endl;
+	xuat << "Ngay dang ki : " << x.thoiGianDangKi() << endl;
+	return xuat;
+};
+
+// Phương thức tìm kiếm User, k là mã số tìm kiếm (1 : tìm theo tên, 2 : tìm theo mã số ID, 3 : tìm theo CMND)
+// str là từ khóa tìm kiếm
+// valid là giá trị tìm được, trả về false nếu không tìm thấy sách nào
+void User::find(int k, string str, bool &valid) {
+	// Tạo mảng để lưu mã số các User tìm được
+	ifstream doc("Users.dat", ios::app);
+	// i lưu vị trí con trỏ trỏ đến trong file User
+	// ds là biến chạy thứ tự sách
+	int i = 0, ds = 0;
+	while (!doc.eof()) {
+		doc.seekg(sizeof(User) * i);
+		doc.read(reinterpret_cast <char *> (this), sizeof(User));
+		// Tìm kiếm theo tên
+		if (k == 1) {
+			if (m_hoTen == str) {
+				//In thông tin tìm kiếm
+				thongTinTimKiem(ds);	
+				luuTamThoi();
+			};
 		};
-		if (kiTuDacBiet(ts, "Mat khau") == false) {
-			cout << endl;
-			changePassWord();
-			return;
+		// Tìm kiếm theo ISBN
+		if (k == 2) {
+			stringstream ss; ss << m_id;
+			string str2; ss >> str2;
+			if (str2 == str) {
+				thongTinTimKiem(ds);
+				luuTamThoi();
+			};
 		};
-		cout << "Xac nhan mat khau moi : ";
-		string ts2 = nhapMatKhau();
-		// Nếu xác nhận trùng khớp thì đổi mật khẩu thành công
-		if (ts2 == ts) strcpy_s(m_passWord, ts.c_str());
-		else {
-			system("cls");
-			cout << "Xac nhan mat khau khong chinh xac !" << endl;
-			changePassWord();
-			return;
+		// Tìm kiếm theo số cmnd
+		if (k == 3) {
+			if (m_cmnd == str) {
+				thongTinTimKiem(ds);
+				luuTamThoi();
+			};
 		};
-		ghi();
-	}
+		i++;
+	};
+
+	// Khi không tìm được kết quả nào thì chương trình sẽ không tạo table
+	if (ds == 0) valid = false;
 	else {
-		system("cls");
-		cout << "Mat khau khong chinh xac !" << endl;
-		changePassWord();
-		return;
+		valid = true;
+		cout << "-------------------------------------------------------------------------------------------------" << endl;
 	};
-	cout << "Thay doi mat khau thanh cong !" << endl;
-	cout << "Nhan ENTER de quay lai ";
-	cin.ignore();
+};
+
+// lấy mã id lưu trong file tạm cho User được chọn trong danh sách tìm kiếm
+void User::layID(int k) {
 	string str;
-	getline(cin, str);
+	int id;
+	ifstream doc1("luutam.txt");
+	for (int i = 1; i < k; i++) getline(doc1, str);
+	doc1 >> id;
+	ifstream doc2("Users.dat", ios::app);
+	// Di chuyển con trỏ tìm kiếm đến ID tương ứng
+	doc2.seekg((id - 1) * sizeof(User));
+	doc2.read(reinterpret_cast <char *> (this), sizeof(User));
+};
+
+void User::khoaUser() {
+	m_active = false;
+};
+
+
+int User::getID() {
+	return m_id;
+};
+string User::getHoTen() {
+	return m_hoTen;
+};
+string User::getJob() {
+	return m_job;
+};
+string User::getAddress() {
+	return m_address;
+};
+string User::getSDT() {
+	return m_sdt;
+};
+string User::getCMND() {
+	return m_cmnd;
+};
+int *User::getTime() {
+	return m_time;
+};
+
+void User::setJob(string str) {
+	strcpy_s(m_job, str.c_str());
+};
+void User::setAddress(string str) {
+	strcpy_s(m_address, str.c_str());
+};
+void User::setSDT(string str) {
+	strcpy_s(m_sdt, str.c_str());
 }
 
-//Nhập mật khẩu ẩn với kí tự *
-string User::nhapMatKhau() {
-	string pass;
-	for (char ch; (ch = _getch()); ) {
-		// Nếu kí tự ch là các kí tự in ra được và độ dài nhỏ hơn 18 thì nhận vào pass, xuất ra màn hình '*'
-		if (isprint(ch) && pass.size() < 18) {
-			cout << '*';
-			pass += ch;
-		};
-		//Khi nhập phím mũi tên thì không thực hiện 
-		if (ch == -32) _getch();
-		//Nếu nhập enter thì kết thúc dòng nhập
-		if (ch == '\r' || ch == '\n') {
-			cout << endl;
-			break;
-		};
-		//Nếu kí tự nhập là backspace 
-		if (ch == '\b') {
-			if (!pass.empty()) {
-				//Xóa một kí tự trên màn hình
-				cout << "\b \b";
-				//Xóa một kí tự trong chuỗi pass
-				pass.erase(pass.size() - 1);
-			};
-		};
-	};
-	return pass;
-};
+int User::tinhSoLuong() {
+	ifstream doc("Users.dat", ios::app);
 
-int User::soSanh(string ch1, string ch2) {
-	fflush(stdin);
-	// biến k lưu số lượng trùng khớp, khi tên đăng nhập và mật khẩu chính xác thì k == 2
-	// Khi chỉ có tên đăng nhập thì k sẽ == 1 và k == 0 khi cả tên đăng nhập và mật khẩu không đúng
-	int k = 0;
-	ifstream doc("Users.dat", ios::app | ios::binary);
-	if (doc) {
-		// Khi thông tin các User được cập nhật thì dữ liệu sẽ lưu ở cuối file
-		int i = 0;
-		// Nếu chưa đọc hết file thì đọc tiếp tục lần lượt qua các Users
-		while (!doc.eof()) {
-			doc.seekg(sizeof(User) * i);
-			doc.read(reinterpret_cast <char *> (this), sizeof(User));
-			// So sánh thông tin tên đăng nhập và mật khẩu với ch1 và ch2
-			if (strcmp(ch1.c_str(), m_nameLogin) == 0 && strcmp(ch2.c_str(), m_passWord) == 0) k = 2;
-			else {
-				if (strcmp(ch1.c_str(), m_nameLogin) == 0) k = 1;
-			};
-			i++;
-		};
-	}
-	else cout << "Loi ! Khong mo duoc file chua thong tin Users." << endl;
-	return k;
-};
+	////Kiểm tra file User là rỗng hay không, nếu không có dữ liệu thì so luong = 0
+	doc.seekg(sizeof(User), ios::end);
+	doc.read(reinterpret_cast <char *> (this), sizeof(User));
 
-string User::getName() {
-	return m_hoTen;
+	////Kiểm tra số lượng sách bằng cách đọc id ở cuối
+	//int i = 0;
+	//if (doc) {
+	//	while (!doc.eof()) {
+	//		doc.seekg(sizeof(User)*i);
+	//		doc.read(reinterpret_cast <char *> (this), sizeof(User));
+	//		i++;
+	//	};
+	//};
+
+	return m_id;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Private:
 
-string User::xoaKTTrongChuoi(string S, int k) {
-	while (S[k] != '\0') {
-		S[k] = S[k + 1];
-		k++;
-	};
-	return S;
-}
-// Xóa khoảng trống thừa
-string User::xoaKhoangTrong(string mangkt) {
-	int dem = 0;
-	size_t dodai = 0;
-	while (mangkt[dodai] != '\0') {
-		if (mangkt[dodai] == ' ') {
-			dem++;
-			if (dem > 1) {
-				mangkt = xoaKTTrongChuoi(mangkt, dodai);
-				dodai--;
-			};
-		}
-		else dem = 0;
-		dodai++;
-	};
-	if (mangkt[dodai - 1] == ' ') {
-		mangkt = xoaKTTrongChuoi(mangkt, dodai - 1);
-		dodai--;
-	};
-	if (mangkt[0] == ' ') {
-		mangkt = xoaKTTrongChuoi(mangkt, 0);
-		dodai--;
-	};
-	char A[99] = "";
-	for (int i = 0; i < dodai; i++) A[i] = mangkt[i];
-	return A;
-}
-
-bool User::chu(string x) {
-	// nếu chuỗi kí tự x chỉ chứa các kí tự trong bảng chữ cái thì j sẽ bằng true
-	bool j = true;
-	for (int i = 0; i < x.length(); i++) {
-		bool k = false;
-		for (char kt = 'a'; kt != 'z' + 1; kt++) if (x[i] == kt) k = true;
-		for (char kt = 'A'; kt != 'Z' + 1; kt++) if (x[i] == kt) k = true;
-		if (x[i] == ' ') k = true;
-		// chỉ cần một kí tự trong chuỗi x không phải chữ cái thì j sẽ bằng false
-		if (k == false) j = false;
-	};
-	return j;
-};
-// Kiểm tra độ dài chuỗi
-bool User::leng(string x, string z) {
-	bool k = true;
-	//kiểm tra độ dài
-	if (x.length() > 18 || x.length() < 6) {
-		system("cls");
-		cout << "Do dai " << z << " khong the vuot qua 18 ky tu hoac nho hon 6 ky tu !";
-		k = false;
-	};
-	return k;
+void User::setTime() {
+	time_t now = time(0);
+	tm t;
+	localtime_s(&t, &now);
+	m_time[0] = t.tm_mday;
+	m_time[1] = t.tm_mon + 1;
+	m_time[2] = t.tm_year + 1900;
+	m_time[3] = t.tm_hour;
+	m_time[4] = t.tm_min;
+	m_time[5] = t.tm_sec;
 };
 
-bool User::kiTuDacBiet(string x, string z) {
-	bool k = true;
-	char S[40] = "";
-	for (int i = 0; i < x.length(); i++) S[i] = x[i];
-	// hàm _strlwr_s dùng để chuyển chuỗi ký tự thành chữ thường
-	_strlwr_s(S);
-	for (int i = 0; i < strlen(S); i++) {
-		//kiểm tra ký tự đặc biệt
-		bool j = false;
-		// nếu S[i] bằng một trong những kí tự cho phép thì biến boolen j sẽ = true, nghĩa là kí tự S[i] đã hợp lệ
-		for (char kt = 'a'; kt != 'z' + 1; kt++) if (S[i] == kt) j = true;
-		for (char so = '0'; so <= '9'; so++) if (x[i] == so) j = true;
-		if (S[i] == '_') j = true;
-		// nếu không hợp lệ sẽ reset lại từ đầu
-		if (j == false) k = false;
-	};
-	if (k == false) {
-		system("cls");
-		cout << z << " khong chua khoang trong hoac ki tu dang biet. Hay thu lai !";
-	};
-	return k;
-};
-// Kiểm tra chuỗi chỉ chứa số hay không
-bool User::number(string x) {
-	// nếu chuỗi kí tự x chỉ có số thì j sẽ bằng true 
-	bool j = true;
-	for (int i = 0; i < x.length(); i++) {
-		bool k = false;
-		for (char so = '0'; so <= '9'; so++) {
-			if (x[i] == so) k = true;
-		};
-		// chỉ cần một kí tự trong chuỗi x không phải số thì j sẽ bằng false
-		if (k == false) j = false;
-	};
-	return j;
+//lưu danh sách tìm kiếm
+void User::luuTamThoi() {
+	ofstream ghi("luutam.txt", ios::app);
+	ghi << m_id << "\n";
 };
 
-int User::soLuong() {
-	ifstream doc("Users.dat", ios::app);
-	//Kiểm tra file User là rỗng hay không, nếu không có dữ liệu thì so luong = 0
-	doc.seekg(sizeof(User), ios::end);
-	doc.read(reinterpret_cast <char *> (this), sizeof(User));
-	return m_id;
+// In thông tin theo định dạng table
+void User::thongTinTimKiem(int &ds) {
+	cout << "|" << setw(5) << left << ds + 1;
+	cout << "|" << setw(8) << m_id;
+	cout << "|" << setw(25) << m_hoTen;
+	cout << "|" << setw(15) << m_cmnd;
+	cout << "|" << setw(17) << m_sdt;
+	cout << "|" << setw(20) << thoiGianDangKi() << "|" << endl;
+	ds++;
+};
+
+string User::thoiGianDangKi() {
+	string s0 = epKieuIntSangString(m_time[0]);
+	string s1 = epKieuIntSangString(m_time[1]);
+	string s2 = epKieuIntSangString(m_time[2]);
+	string s3 = epKieuIntSangString(m_time[3]);
+	string s4 = epKieuIntSangString(m_time[4]);
+	string s5 = epKieuIntSangString(m_time[5]);
+
+	string s = s0 + "/" + s1 + "/" + s2 + "  ";
+	if (m_time[3] < 10) s += "0";
+	s += s3 + ":";
+	if (m_time[4] < 10) s += "0";
+	s += s4 + ":";
+	if (m_time[5] < 10) s += "0";
+	s += s5;
+	return s;
 };
 

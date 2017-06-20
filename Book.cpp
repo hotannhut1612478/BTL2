@@ -20,7 +20,6 @@ void Book::find(int k, string str, bool &valid) {
 	// i lưu vị trí con trỏ trỏ đến trong file BookInfo
 	// ds là biến chạy thứ tự sách
 	int i = 0, ds = 0;
-	// i chạy từ số lượng đến 1 ( cuối file đến đầu file ).
 	while (!doc.eof()) {
 		doc.seekg(sizeof(Book) * i);
 		doc.read(reinterpret_cast <char *> (this), sizeof(Book));
@@ -96,6 +95,8 @@ void Book::fill(){
 	cin.ignore();
 	getline(cin, str);
 	strcpy_s(m_describe, str.c_str());
+	cout << "So luong : ";
+	cin >> m_number;
 };
 
 // bổ sung vào thư viện

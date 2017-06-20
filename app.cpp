@@ -6,9 +6,9 @@
 using namespace std;
 
 int main() {
-	User user;
+	Account x;
 	Menu menu;
-	menu.menuIntro(user);
+	menu.menuIntro(x);
 
 	system("pause");
 }

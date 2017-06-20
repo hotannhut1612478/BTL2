@@ -1,14 +1,11 @@
 ﻿#pragma once
 #include <string>
 class User{
-	// Mã số tài khoản
+protected:
+	// Mã số user
 	int m_id = 0;
 	// Họ và tên
 	char m_hoTen[40] = "";
-	// Tên đăng nhập
-	char m_nameLogin[20] = "";
-	// Mật khẩu
-	char m_passWord[20] = "";
 	// Nghề Nghiệp
 	char m_job[30] = "";
 	// Địa chỉ
@@ -17,10 +14,10 @@ class User{
 	char m_sdt[14] = {};
 	// chứng minh nhân dân
 	char m_cmnd[14] = {};
-	// Mã định danh
-	int m_ident;
 	// Tình trạng hoạt động
 	bool m_active = true;
+	// Ngày đăng kí
+	int m_time[6] = {};
 public:
 	User();
 	~User();
@@ -28,18 +25,25 @@ public:
 	void subscription();
 	void ghi();
 	void doc();
-	void inThongTin();
-	void changePassWord();
-	std::string nhapMatKhau();
-	int soSanh(std::string, std::string);
-	std::string getName();
+	friend std::ostream &operator<< (std::ostream &, User &);
+	int getID();
+	void find(int, std::string, bool &);
+	void layID(int);
+	void khoaUser();
+	int getIdent();
+	std::string getHoTen();
+	std::string getJob();
+	std::string getAddress();
+	std::string getSDT();
+	std::string getCMND();
+	int *getTime();
+	void setJob(std::string);
+	void setAddress(std::string);
+	void setSDT(std::string);
+	int tinhSoLuong();
+	std::string thoiGianDangKi();
 private:
-	std::string xoaKTTrongChuoi(std::string, int);
-	std::string xoaKhoangTrong(std::string);
-	bool chu(std::string);
-	bool leng(std::string, std::string);
-	bool kiTuDacBiet(std::string, std::string);
-	bool number(std::string);
-	int soLuong();
+	void setTime();
+	void luuTamThoi();
+	void thongTinTimKiem(int &);
 };
-
