@@ -1,4 +1,5 @@
 #include "ThongBaoThuVien.h"
+#include "Complex.h"
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -14,7 +15,7 @@ ThongBaoThuVien::~ThongBaoThuVien() {
 void ThongBaoThuVien::docThongBao(ThongBaoThuVien data[Max_Anouce]) {
 	cout << "Chon thong bao ban muon doc : ";
 	int n;
-	cin >> n;
+	n = luaChon();
 	system("cls");
 	cout << setw(center) << data[n - 1].tieuDe << endl;
 	cout << data[n - 1].noiDung << endl;
@@ -32,6 +33,7 @@ void ThongBaoThuVien::themThongBao() {
 	f << data2 << endl;
 	f.close();
 	cout << "*****Da them.*****" << endl;
+	system("pause");
 }
 
 void ThongBaoThuVien::suaThongBao(ThongBaoThuVien thongbao[Max_Anouce], int k) {
@@ -55,7 +57,7 @@ void ThongBaoThuVien::suaThongBao(ThongBaoThuVien thongbao[Max_Anouce], int k) {
 		getline(cin, data2);
 		thongbao[set1 - 1].noiDung = data2;
 		f.open("thongbao.txt", ios::out);
-		for (int i = 0; i < k; i++){
+		for (int i = 0; i < k; i++) {
 			f << thongbao[i].tieuDe + "\n";
 			f << thongbao[i].noiDung + "\n";
 		};
@@ -63,10 +65,11 @@ void ThongBaoThuVien::suaThongBao(ThongBaoThuVien thongbao[Max_Anouce], int k) {
 		cout << "*****Da thay doi.*****" << endl;
 		break;
 	case 2:
-		cout << "Tro ve menu.";
+		suaThongBao(thongbao, k);
 		break;
 	default:
-		cout << "Moi ban nhap lai";
+		cout << "Moi ban nhap lai" << endl;
+		suaThongBao(thongbao, k);
 		break;
 	};
 }

@@ -1,7 +1,12 @@
 ﻿#include "Complex.h"
+#include "thoiGian.h"
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <ctime>
+#include <conio.h>
+#include <fstream>
+#include <Windows.h>
 
 using namespace std;
 /////////////////////////////////////////////////////////////////////////////
@@ -41,7 +46,7 @@ bool number(string x) {
 		bool k = false;
 		for (char so = '0'; so <= '9'; so++) {
 			if (x[i] == so) k = true;
-		};
+		};	
 		// chỉ cần một kí tự trong chuỗi x không phải số thì j sẽ bằng false
 		if (k == false) j = false;
 	};
@@ -60,13 +65,12 @@ bool kiTuDacBiet(string x, string z) {
 		// nếu S[i] bằng một trong những kí tự cho phép thì biến boolen j sẽ = true, nghĩa là kí tự S[i] đã hợp lệ
 		for (char kt = 'a'; kt != 'z' + 1; kt++) if (S[i] == kt) j = true;
 		for (char so = '0'; so <= '9'; so++) if (x[i] == so) j = true;
-		if (S[i] == '_') j = true;
+			if (S[i] == '_') j = true;
 		// nếu không hợp lệ sẽ reset lại từ đầu
 		if (j == false) k = false;
 	};
 	if (k == false) {
 		system("cls");
-		cout << z << " khong chua khoang trong hoac ki tu dang biet. Hay thu lai !";
 	};
 	return k;
 };
@@ -77,7 +81,6 @@ bool leng(string x, string z) {
 	//kiểm tra độ dài
 	if (x.length() > 18 || x.length() < 6) {
 		system("cls");
-		cout << "Do dai " << z << " khong the vuot qua 18 ky tu hoac nho hon 6 ky tu !";
 		k = false;
 	};
 	return k;
@@ -140,3 +143,90 @@ string epKieuIntSangString(int k) {
 	ss >> str;
 	return str;
 }
+
+string thoiGianHeThong() {
+	time_t now = time('\0');
+	tm t;
+	localtime_s(&t, &now);
+	string s = "";
+	if (t.tm_hour < 10) s += "0";
+	s += epKieuIntSangString(t.tm_hour) + ":";
+	if (t.tm_min < 10) s += "0";
+	s += epKieuIntSangString(t.tm_min);
+	return s;
+}
+
+//Nhập mật khẩu ẩn với kí tự *
+string nhapKiTuAn() {
+	string pass;
+	for (char ch; (ch = _getch()); ) {
+		// Nếu kí tự ch là các kí tự in ra được và độ dài nhỏ hơn 18 thì nhận vào pass, xuất ra màn hình '*'
+		if (isprint(ch) && pass.size() < 18) {
+			cout << '*';
+			pass += ch;
+		};
+		//Khi nhập phím mũi tên thì không thực hiện 
+		if (ch == -32) _getch();
+		//Nếu nhập enter thì kết thúc dòng nhập
+		if (ch == '\r' || ch == '\n') {
+			cout << endl;
+			break;
+		};
+		//Nếu kí tự nhập là backspace 
+		if (ch == '\b') {
+			if (!pass.empty()) {
+				//Xóa một kí tự trên màn hình
+				cout << "\b \b";
+				//Xóa một kí tự trong chuỗi pass
+				pass.erase(pass.size() - 1);
+			};
+		};
+	};
+	return pass;
+};
+
+string maHoa(string matKhau) {
+	for (int i = 0; i < matKhau.length(); i++) matKhau[i] += i;
+	return matKhau;
+};
+
+long chenhLechNgay(ThoiGian x, ThoiGian y) {
+	long sum = 0;
+	ThoiGian up, down;
+	if (y.nam > x.nam) {
+		up = y;
+		down = x;
+	}
+	else {
+		up = x;
+		down = y;
+	};
+
+	for (int i = down.nam; i < up.nam; i++) {
+		if (i % 4 == 0 && i % 100 != 0 || i % 400 == 0) sum += 366;
+		else sum += 365;
+	};
+	sum += up.tinhNgay() - down.tinhNgay();
+	return sum;
+};
+
+void xoaFile(string str) {
+	ofstream xoaFile(str, ios_base::out | ios_base::trunc);
+	if (xoaFile);
+};
+
+int luaChon() {
+	string s;
+	getline(cin, s);
+	stringstream ss(s);
+	int k = -1;
+	ss >> k;
+	return k;
+};
+
+// ham do hoa thay doi mau chu va mau nen;
+void doHoa(int x){
+	HANDLE mau;
+	mau = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(mau, x);
+};

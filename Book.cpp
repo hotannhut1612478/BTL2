@@ -1,15 +1,18 @@
 ﻿#include "Book.h"
+#include "Complex.h"
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <fstream>
 #include <sstream>
 using namespace std;
 
-Book::Book(){
+Book::Book() {
 };
 
 Book::~Book() {
 };
+
 
 // Phương thức tìm kiếm sách, k là mã số tìm kiếm (1 : tìm theo tên, 2 : tìm theo mã số sách, 3 : tìm theo tác giả)
 // str là từ khóa tìm kiếm
@@ -56,54 +59,107 @@ void Book::find(int k, string str, bool &valid) {
 };
 
 void Book::inThongTin() {
+	doHoa(12);
 	cout << "-------------------------------------------------------------------------------" << endl;
+	doHoa(14);
 	cout << "ID " << m_id << endl;
-	cout << " =========     Ten sach       : " << m_name << endl;
-	cout << "||       ||    Ngay phat hanh : " << m_date[0] << "/" << m_date[1] << "/" << m_date[2] << endl;
-	cout << "||       ||    Tac gia        : " << m_author << endl;
-	cout << "||       ||    Gia tien thue  : " << m_rentCost << " (gia goc : " << m_cost << ")" << endl;
-	cout << "||       ||    Nha xuat ban   : " << m_publisher << endl;
-	cout << " =========                      " << endl;
-	cout << " Mo ta : " << m_describe << endl;
+	doHoa(10);
+	cout << " =========    ";
+	doHoa(12);
+	cout << "Ten sach       : ";
+	doHoa(15);
+	cout << m_name << endl;
+	doHoa(10);
+	cout << "||       ||    ";
+	doHoa(12);
+	cout << " Ngay phat hanh : ";
+	doHoa(15);
+	cout << m_date[0] << "/" << m_date[1] << "/" << m_date[2] << endl;
+	doHoa(10);
+	cout << "||       ||    ";
+	doHoa(12);
+	cout << " Tac gia : ";
+	doHoa(15);
+	cout << m_author << endl;
+	doHoa(10);
+	cout << "||       ||    ";
+	doHoa(12);
+	cout << " Gia tien thue : ";
+	doHoa(15);
+	cout << m_rentCost << " (gia goc : " << m_cost << ")" << endl;
+	doHoa(10);
+	cout << "||       ||    ";
+	doHoa(12);
+	cout << " Nha xuat ban : ";
+	doHoa(15);
+	cout << m_publisher << endl;
+	doHoa(10);
+	cout << " =========     ";
+	doHoa(12);
+	cout << "Hien con ";
+	doHoa(15);
+	cout << m_number << " quyen                   " << endl;
+	doHoa(12);
+	cout << " Mo ta : ";
+	doHoa(15);
+	cout << m_describe << endl;
+	doHoa(12);
 	cout << "-------------------------------------------------------------------------------" << endl;
 };
 
 //điền thông tin
-void Book::fill(){
+void Book::fill() {
 	m_id = soLuong() + 1;
 	string str;
+	doHoa(12);
 	cout << "Nhap ten sach : ";
+	doHoa(15);
 	getline(cin, str);
 	strcpy_s(m_name, str.c_str());
+	doHoa(12);
 	cout << "Nhap ma so tieu chuan quoc te (ISBN) : ";
-	cin >> m_ISBN;
+	doHoa(15);
+	m_ISBN = luaChon();
+	doHoa(12);
 	cout << "Nhap ten tac gia : ";
-	cin.ignore();
+	doHoa(15);
 	getline(cin, str);
 	strcpy_s(m_author, str.c_str());
+	doHoa(12);
 	cout << "Ngay phat hanh : ";
-	cin >> m_date[0] >> m_date[1] >> m_date[2];
+	doHoa(15);
+	getline(cin, str);
+	stringstream ss(str);
+	ss >> m_date[0] >> m_date[1] >> m_date[2];
+	doHoa(12);
 	cout << "Nha xuat ban : ";
-	cin.ignore();
+	doHoa(15);
 	getline(cin, str);
 	strcpy_s(m_publisher, str.c_str());
+	doHoa(12);
 	cout << "Nhap so tien thue : ";
-	cin >> m_rentCost;
+	doHoa(15);
+	m_rentCost = luaChon();
+	doHoa(12);
 	cout << "Nhap gia tien sach : ";
-	cin >> m_cost;
+	doHoa(15);
+	m_cost = luaChon();
+	doHoa(12);
 	cout << "Mo ta : ";
-	cin.ignore();
+	doHoa(15);
 	getline(cin, str);
 	strcpy_s(m_describe, str.c_str());
+	doHoa(12);
 	cout << "So luong : ";
-	cin >> m_number;
+	doHoa(15);
+	m_number = luaChon();
 };
 
 // bổ sung vào thư viện
 void Book::add() {
 	ofstream ghi1("Book.txt", ios::app);
 	ofstream ghi2("BookInfo.dat", ios::app);
-	ghi1 << m_name << "\n";
+	ghi1 << m_id << " " << m_name << "\n";
 	ghi2.write(reinterpret_cast <const char *> (this), sizeof(Book));
 }
 
@@ -127,13 +183,60 @@ void Book::autoAdd() {
 void Book::layID(int k) {
 	string str;
 	int id;
+	// lấy dữ liệu ID thứ k trong file lưu danh sách tìm kiếm tạm thời
 	ifstream doc1("luutam.txt");
 	for (int i = 1; i < k; i++) getline(doc1, str);
 	doc1 >> id;
+	// đọc đến vị trí id đó
 	ifstream doc2("BookInfo.dat", ios::app);
 	doc2.seekg((id - 1) * sizeof(Book));
 	doc2.read(reinterpret_cast <char *> (this), sizeof(Book));
+};
+
+// In danh sách các sách hiện đang có
+void Book::all() {
+	ifstream docThongTin("BookInfo.dat");
+	int i = 0;
+	Book x, *y = &x;
+	if (docThongTin) {
+		while (!docThongTin.eof()) {
+			docThongTin.seekg(sizeof(Book)*i);
+			docThongTin.read(reinterpret_cast <char *> (y), sizeof(Book));
+			i++;
+			int ds = 0;
+			x.thongTinTimKiem(ds);
+		};
+	};
+};
+
+void Book::muon(int k) {
+	ifstream docThongTin("BookInfo.dat");
+	int i = soLuong();
+	Book x, *y = &x;
+	while (i > 0) {
+		docThongTin.seekg(sizeof(Book)*i);
+		docThongTin.read(reinterpret_cast <char *> (y), sizeof(Book));
+		i--;
+		if (m_id = k) {
+			m_number--;
+			add();
+			break;
+		};
+	};
 }
+
+int Book::getID() {
+	return m_id;
+};
+string Book::getTenSach() {
+	return m_name;
+};
+string Book::getTacGia() {
+	return m_author;
+};
+int Book::getSL() {
+	return m_number;
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //Private:
@@ -166,17 +269,20 @@ bool Book::soSanh(string s1, string s) {
 };
 
 int Book::soLuong() {
-	ifstream docThongTin("BookInfo.dat");
-	//Kiểm tra số lượng sách bằng cách đọc id ở cuối
+	ifstream doc("BookInfo.dat", ios::app);
+	//Kiểm tra file User là rỗng hay không, nếu không có dữ liệu thì so luong = 0
 	int i = 0;
-	if (docThongTin) {
-		while (!docThongTin.eof()) {
-			docThongTin.seekg(sizeof(Book)*i);
-			docThongTin.read(reinterpret_cast <char *> (this), sizeof(Book));
+	Book x, *y = &x;
+	int sl = 0;
+	if (doc) {
+		while (!doc.eof()) {
+			doc.seekg(sizeof(Book)*i);
+			doc.read(reinterpret_cast <char *> (y), sizeof(Book));
+			if (x.getID() > sl) sl = x.getID();
 			i++;
 		};
 	};
-	return m_id;
+	return sl;
 };
 
 //lưu danh sách tìm kiếm
@@ -184,3 +290,14 @@ void Book::luuTamThoi() {
 	ofstream ghi("luutam.txt", ios::app);
 	ghi << m_id << "\n";
 }
+
+// In thông tin theo định dạng table
+void Book::thongTinTimKiem(int &ds) {
+	cout << "|" << setw(5) << left << ds + 1;
+	cout << "|" << setw(8) << m_id;
+	cout << "|" << setw(25) << m_name;
+	cout << "|" << setw(15) << m_author;
+	cout << "|" << setw(17) << m_rentCost;
+	cout << "|" << setw(20) << m_number << "|" << endl;
+	ds++;
+};

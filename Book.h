@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <string>
-class Book{
+class Book {
 public:
 	Book();
 	~Book();
@@ -10,21 +10,21 @@ private:
 	// Mã số sách
 	int m_ISBN = -1;
 	// Tên sách
-	char m_name[64] = "";
+	char m_name[64] = ".";
 	// Ngày phát hành
 	int m_date[3] = { -1, -1, -1 };
 	// Nhà xuất bản
-	char m_publisher[64] = "";
+	char m_publisher[64] = ".";
 	// Tác giả
-	char m_author[64] = "";
+	char m_author[64] = ".";
 	// Giá thuê
 	long m_rentCost = -1;
 	// Giá gốc
 	long m_cost = -1;
 	// Mô tả - giới thiệu
-	char m_describe[500] = "";
+	char m_describe[500] = ".";
 	// Số lượng
-	int m_number = -1;
+	int m_number = 0;
 public:
 	void find(int, std::string, bool &);
 	void inThongTin();
@@ -32,9 +32,17 @@ public:
 	void add();
 	void autoAdd();
 	void layID(int);
+	void all();
+	// vào ra thông tin
+	void muon(int);
+	int getID();
+	std::string getTenSach();
+	std::string getTacGia();
+	int getSL();
 private:
 	bool soSanh(std::string, std::string);
 	int soLuong();
 	void luuTamThoi();
+	void thongTinTimKiem(int &);
 };
 
